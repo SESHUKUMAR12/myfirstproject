@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="349642ca-41cf-443c-b06c-949cde11284c" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="1c4d9dcc-d18d-4fd4-9de1-6335de1a0303" >
+		<http:request-connection host="mu.learn.mulesoft.com" />
+	</http:request-config>
+	<flow name="dwldemoFlow" doc:id="b21774c2-a14e-411f-a931-9f9c5da6b474" >
+		<http:listener doc:name="Listener" doc:id="041e4c8b-6d15-4e03-b89a-332c6a0f14b5" config-ref="HTTP_Listener_config" path="/dwldemo"/>
+		<logger level="INFO" doc:name="Logger" doc:id="31c8fb00-9630-4d0c-9279-621fb513df10" message='#["start of the flow"]'/>
+		<http:request method="GET" doc:name="Request" doc:id="6af728d4-2429-49f0-aaa6-4dc116923952" config-ref="HTTP_Request_configuration" path="/united/flights"/>
+		<ee:transform doc:name="Transform Message" doc:id="45901a50-c5db-4404-a712-e9d54ff7f095" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var a = 2
+var com =["sun","jb","b"]
+var stdinfo=[
+{
+   "studentID" :12  ,                                            
+   "LastName"  :"mani",
+   "FirstName" :"kanatha",
+   "Address"   :"ameerpet",
+   "City"      :"hyd",
+   "status"    :"activat"
+},
+
+{
+   "studentID" :12  ,                                            
+   "LastName"  :"mansgdsbi",
+   "FirstName" :"kandgdgatha",
+   "Address"   :"ameskserpet",
+   "City"      :"hgvcvhnbjbyd",
+   "status"    :"activat"
+},
+{
+   "studentID" :12  ,                                            
+   "LastName"  :"vgdgi",
+   "FirstName" :"kanavsvtha",
+   "Address"   :"vjdngn",
+   "City"      :"hyvvsvsd",
+   "status"    :"inactivat"
+},	
+]
+---
+(stdinfo map ((item, index) -> {
+
+	//"what is an item":item,
+	//"what is an index":index,
+	"name is ":item.LastName,
+	"student_status":item.status,
+}))filter $.student_status =="activat"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="cf9fc9a6-c37d-4abb-9fe4-2e72f6cdd567" message='#["end of the flow"]'/>
+	</flow>
+</mule>
